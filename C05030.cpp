@@ -3,12 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+typedef long long ll;
 
-struct mang{
-	int mau,hang,cot;
-};
-int n,m,nmax;
-struct mang a[1005*1005];
+int n,m,a[1005][1005],hang[1005][3],cot[1005][3];
 int max(int a,int b)
 {
 	if (a>b) return a;
@@ -19,51 +16,62 @@ int min(int a,int b)
 	if (a>b) return b;
 	return a;
 }
-int check(struct mang tmp1,struct mang tmp2,struct mang tmp3)
+void reset()
 {
-	if (tmp1.mau==tmp3.mau && tmp1.mau!=tmp2.mau && tmp1.hang==tmp2.hang && tmp2.cot==tmp3.cot) return 1;
-	return 0;
+	for (int i=1;i<=n;i++) 
+		{
+			hang[i][1]=0;
+			hang[i][2]=0;
+		}
+	for (int j=1;j<=m;j++) 
+		{
+			cot[j][1]=0;
+			cot[j][2]=0;
+		}
+	for (int i=1;i<=n;i++)
+		for (int j=1;j<=m;j++) a[i][j]=0;
 }
-void process()
-{
-	int res=0;
-//	for (int i=1;i<=nmax;i++) 
-//		printf("%d %d %d\n",a[i].mau,a[i].hang,a[i].cot);
-	for (int i=1;i<=nmax-2;i++)
-		for (int j=i+1;j<=nmax-1;j++)
-			for (int k=j+1;k<=nmax;k++) 
-				if (check(a[i],a[j],a[k]) || check(a[i],a[k],a[j]) || check(a[j],a[i],a[k]) || check(a[j],a[k],a[i]) || check(a[k],a[i],a[j]) || check(a[k],a[j],a[i])) 
-				{
-					res++;
-				//	printf("%d %d %d\n",i,j,k);
-				}
-	printf("%d\n",res);
-}
+
 int main()
 {
-	freopen("thu.inp","r",stdin);
-	int tc; 
+//	freopen("thu.inp","r",stdin);
+	int tc;
 	scanf("%d",&tc);
 	while (tc--)
 	{
-		nmax=0;
+		long long res=0;
 		scanf("%d %d",&n,&m);
-		char x;
+		reset();
 		for (int i=1;i<=n;i++)
 			for (int j=1;j<=m;j++)
 			{
+				char x;
 				scanf(" %c",&x);
 				if (x!='0') 
 				{
-					nmax++;
-					a[nmax].mau=x-'0';
-					a[nmax].hang=i;
-					a[nmax].cot=j;
+					int tmp=x-'0';
+					a[i][j]=tmp;
+					if (tmp==1)
+					{
+						cot[j][1]++;
+						hang[i][1]++;
+					}
+					else
+					{
+						cot[j][2]++;
+						hang[i][2]++;
+					}
 				}
 			}
-		process();
+		for (int i=1;i<=n;i++)
+			for (int j=1;j<=m;j++)
+				if (a[i][j]==1 || a[i][j]==2)
+				{
+					if (a[i][j]==1) res+=hang[i][2]*cot[j][2];
+					else res+=hang[i][1]*cot[j][1];
+				}
+		printf("%lld\n",res);
 	}
-	
 }
 
 
